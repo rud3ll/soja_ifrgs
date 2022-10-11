@@ -1,0 +1,16 @@
+---
+title: "analyses"
+format: html
+editor: visual
+---
+
+
+```{r}
+#| echo: false
+library(tidyverse)
+```
+
+```{r}
+readxl::read_excel("experimento_soja.xlsx")
+```
+
