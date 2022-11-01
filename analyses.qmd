@@ -11,6 +11,14 @@ library(tidyverse)
 ```
 
 ```{r}
-readxl::read_excel("experimento_soja.xlsx")
+readxl::read_excel("rudell_soybeans_experiment.xlsx", 
+                   sheet = "SheetInjury_yield") %>% 
+  janitor::clean_names() -> data
+```
+
+```{r}
+data %>% 
+  ggplot(aes(x = herbicide, y = yield, color = cultivar)) +
+  geom_point()
 ```
 
