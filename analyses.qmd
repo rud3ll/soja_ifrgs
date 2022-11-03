@@ -13,12 +13,21 @@ library(tidyverse)
 ```{r}
 readxl::read_excel("rudell_soybeans_experiment.xlsx", 
                    sheet = "SheetInjury_yield") %>% 
-  janitor::clean_names() -> data
+  janitor::clean_names() %>% 
+  mutate(density = case_when(
+    cultivar == "59i58" ~ "normal", 
+    cultivar == "59i58less" ~ "less",
+    TRUE ~ "more")) %>% 
+  mutate(cultivar = str_remove_all(cultivar, "[lessmore]"),
+         injury = as_factor(injury),
+         rep = as_factor(rep)) %>% 
+  mutate_if(is_character, as_factor) -> data
 ```
 
 ```{r}
 data %>% 
   ggplot(aes(x = herbicide, y = yield, color = cultivar)) +
-  geom_point()
+  geom_point() +
+  facet_grid(~density)
 ```
 
