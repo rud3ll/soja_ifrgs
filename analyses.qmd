@@ -8,7 +8,14 @@ editor: visual
 ```{r}
 #| echo: false
 library(tidyverse)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(multcomp)
 ```
+
+
+
 
 ```{r}
 readxl::read_excel("rudell_soybeans_experiment.xlsx", 
@@ -17,17 +24,83 @@ readxl::read_excel("rudell_soybeans_experiment.xlsx",
   mutate(density = case_when(
     cultivar == "59i58" ~ "normal", 
     cultivar == "59i58less" ~ "less",
-    TRUE ~ "more")) %>% 
+    cultivar == "59i58more" ~ "more",
+    cultivar == "5892" ~ "normal",
+    cultivar == "5892less" ~ "less",
+    cultivar == "5892more" ~ "more",
+    cultivar == "58i60" ~ "normal", 
+    cultivar == "58i60less" ~ "less",
+    cultivar == "58i60more" ~ "more",
+    cultivar == "55i57" ~ "normal", 
+    cultivar == "55i57less" ~ "less",
+    cultivar == "55i57more" ~ "more",
+    TRUE ~ NA_character_)) %>% 
   mutate(cultivar = str_remove_all(cultivar, "[lessmore]"),
          injury = as_factor(injury),
          rep = as_factor(rep)) %>% 
-  mutate_if(is_character, as_factor) -> data
+  mutate_if(is_character, as_factor) %>% 
+  select(cultivar, herbicide, density, rep, injury, injury_7d, yield) %>% 
+  rename(dat = injury,
+         injury = injury_7d) -> data
 ```
+
+
+
 
 ```{r}
 data %>% 
-  ggplot(aes(x = herbicide, y = yield, color = cultivar)) +
-  geom_point() +
-  facet_grid(~density)
+  ggplot(aes(x = herbicide, y = yield, color = density)) +
+  geom_boxplot() +
+  facet_grid(~cultivar) + 
+  coord_flip()
+```
+
+```{r}
+data
+```
+
+
+```{r}
+lmer(yield ~ herbicide * density * cultivar + (1|rep), 
+      REML = TRUE, data = data) -> model_yield
+```
+
+
+```{r}
+anova(model_yield)
+```
+
+
+
+```{r}
+emmip(model_yield, ~ cultivar * density) +
+  coord_flip()
+```
+
+
+```{r}
+lsmeans <- emmeans(model_yield, ~ cultivar * density, 
+                   cont="pairwise", 
+                   adjust = "none", 
+                   alpha = 0.05)
+lsmeans
+```
+
+
+```{r}
+plot(lsmeans$emmeans, ~ cultivar * density, 
+     comparisons = TRUE, 
+     alpha=0.05, 
+     adjust="none")
+```
+
+
+```{r}
+cld_yield <- cld(lsmeans$emmeans, 
+           alpha=0.05, 
+           Letters = letters, 
+           adjust = "none", 
+           reversed = TRUE)
+cld_yield
 ```
 
