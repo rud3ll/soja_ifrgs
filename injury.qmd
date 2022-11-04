@@ -1,0 +1,14 @@
+---
+title: "Injury"
+format: html
+editor: source
+---
+
+https://openweedsci.netlify.app/post/2019/12/20/one-way-anova-for-percentage-weed-control-data/
+
+
+
+```{r}
+
+```
+

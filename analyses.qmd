@@ -1,8 +1,10 @@
 ---
 title: "analyses"
 format: html
-editor: visual
+editor: source
 ---
+
+
 
 ```{r}
 #| echo: false
