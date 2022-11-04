@@ -4,7 +4,6 @@ format: html
 editor: visual
 ---
 
-
 ```{r}
 #| echo: false
 library(tidyverse)
@@ -13,9 +12,6 @@ library(lmerTest)
 library(emmeans)
 library(multcomp)
 ```
-
-
-
 
 ```{r}
 readxl::read_excel("rudell_soybeans_experiment.xlsx", 
@@ -39,12 +35,10 @@ readxl::read_excel("rudell_soybeans_experiment.xlsx",
          injury = as_factor(injury),
          rep = as_factor(rep)) %>% 
   mutate_if(is_character, as_factor) %>% 
-  select(cultivar, herbicide, density, rep, injury, injury_7d, yield) %>% 
+  dplyr::select(cultivar, herbicide, density, rep, injury, injury_7d, yield) %>% 
   rename(dat = injury,
          injury = injury_7d) -> data
 ```
-
-
 
 
 ```{r}
@@ -59,24 +53,19 @@ data %>%
 data
 ```
 
-
 ```{r}
 lmer(yield ~ herbicide * density * cultivar + (1|rep), 
       REML = TRUE, data = data) -> model_yield
 ```
 
-
 ```{r}
 anova(model_yield)
 ```
-
-
 
 ```{r}
 emmip(model_yield, ~ cultivar * density) +
   coord_flip()
 ```
-
 
 ```{r}
 lsmeans <- emmeans(model_yield, ~ cultivar * density, 
@@ -86,14 +75,12 @@ lsmeans <- emmeans(model_yield, ~ cultivar * density,
 lsmeans
 ```
 
-
 ```{r}
 plot(lsmeans$emmeans, ~ cultivar * density, 
      comparisons = TRUE, 
      alpha=0.05, 
      adjust="none")
 ```
-
 
 ```{r}
 cld_yield <- cld(lsmeans$emmeans, 
@@ -103,4 +90,3 @@ cld_yield <- cld(lsmeans$emmeans,
            reversed = TRUE)
 cld_yield
 ```
-
