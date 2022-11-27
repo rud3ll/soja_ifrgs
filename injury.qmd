@@ -9,6 +9,58 @@ https://openweedsci.netlify.app/post/2019/12/20/one-way-anova-for-percentage-wee
 
 
 ```{r}
+library(readxl)
+Injury <- read_excel("oRudell_Soybeans experiment.xlsx")
+View(Injury)
+```
+
+```{r}
+install.packages("tidyverse")
+install.packages("glmmTMB")
+install.packages("lme4")
+install.packages("lmerTest")
+install.packages("emmeans")
+install.packages("RCurl")
+install.packages("car")
+install.packages("kableExtra")
+```
+
+
+```{r}
+library(tidyverse)
+library(RCurl)
+```
+
+
+```{r}
+summary(Injury)
+
+```
+
+```{r}
+data <-(Injury)
+data
+head(data)
+```
+
+```{r}
+data$Cultivar = factor(data$Cultivar)
+data$Herbicide = factor(data$Herbicide)
+data$Rep = factor(data$Rep)
+data$Injury_7 = as.numeric(data$Injury_7)
+data$injury_14 = as.numeric(data$injury_14)
+str(data)
+```
+```{r}
+data["were plot"] <- NULL 
+data["Yield"] <- NULL
+str(data)
+```
+
+
+```{r}
+library(car)
+leveneTest()
 
 ```
 
